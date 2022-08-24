@@ -18,13 +18,13 @@ class TelaInserir extends StatefulWidget {
 }
 
 class _TelaInserirState extends State<TelaInserir> {
-  String date = DateFormat('dd/MM/yyyy').format(DateTime.now());
+  String date = '';
   TextEditingController _controllerNome = TextEditingController();
   TextEditingController _controllerCurso = TextEditingController();
   TextEditingController _controllerNasc = TextEditingController();
   TextEditingController _controllerMatr = TextEditingController();
   List<String> items = ['Masculino', 'Feminino'];
-  String? selectedItem = 'Masculino';
+  String? selectedItem;
   bool visaoReset = true;
 
   @override
@@ -103,26 +103,21 @@ class _TelaInserirState extends State<TelaInserir> {
           )
         ],
       ),
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              criarEditText('Nome: ', stringFormatter, _controllerNome,
-                  TextInputType.text),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 0, 5),
-                    child: ElevatedButton(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width - 50,
-                        child: Center(
-                            child: Text(
-                                'Selecione a Data de Nascimento: ${_controllerNasc.text}')),
-                      ),
-                      onPressed: () async {
+      body: SizedBox(
+        child: Wrap(
+          children: [
+            GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    criarEditText('Nome: ', stringFormatter, _controllerNome,
+                        TextInputType.text),
+                    const Padding(padding: EdgeInsets.all(5.0)),
+                    TextField(
+                      onTap: () async {
                         DateTime? newDate = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
@@ -134,25 +129,32 @@ class _TelaInserirState extends State<TelaInserir> {
                             date = DateFormat('dd/MM/yyyy').format(newDate));
                         _controllerNasc.text = date;
                       },
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 5, 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 10, 0),
-                      child: Text(
-                        'Sexo:',
-                        style: TextStyle(
+                      readOnly: true,
+                      showCursor: true,
+                      controller: _controllerNasc,
+                      decoration: const InputDecoration(
+                        filled: true,
+                        hintStyle: TextStyle(color: Colors.red, fontSize: 20),
+                        hintText: 'Toque para inserir a data:',
+                        labelText: 'Data de Nascimento',
+                        border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
                           fontSize: 25,
                         ),
                       ),
                     ),
-                    DropdownButton(
+                    const Padding(padding: EdgeInsets.all(5.0)),
+                    DropdownButtonFormField(
+                      decoration: const InputDecoration(
+                          label: Text('Sexo: '),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5.0),
+                            ),
+                          ),
+                          filled: true,
+                          hintStyle: TextStyle(color: Colors.red, fontSize: 20),
+                          hintText: 'Toque para selecionar o sexo:'),
                       value: selectedItem,
                       items: items
                           .map((item) => DropdownMenuItem<String>(
@@ -165,15 +167,17 @@ class _TelaInserirState extends State<TelaInserir> {
                         selectedItem = item;
                       }),
                     ),
+                    const Padding(padding: EdgeInsets.all(5.0)),
+                    criarEditText('Curso: ', stringFormatter, _controllerCurso,
+                        TextInputType.text),
+                    const Padding(padding: EdgeInsets.all(5.0)),
+                    criarEditText('Matrícula: ', matrFormatter, _controllerMatr,
+                        TextInputType.number),
                   ],
                 ),
               ),
-              criarEditText('Curso: ', stringFormatter, _controllerCurso,
-                  TextInputType.text),
-              criarEditText('Matrícula: ', matrFormatter, _controllerMatr,
-                  TextInputType.number),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -186,20 +190,18 @@ class _TelaInserirState extends State<TelaInserir> {
     _controllerNome.clear();
   }
 
-  Padding criarEditText(String label, MaskTextInputFormatter formatter,
+  TextField criarEditText(String label, MaskTextInputFormatter formatter,
       TextEditingController controller, TextInputType teclado) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(5, 3, 5, 5),
-      child: TextField(
-        keyboardType: teclado,
-        inputFormatters: [formatter],
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          labelStyle: const TextStyle(
-            fontSize: 25,
-          ),
+    return TextField(
+      onTap: () {},
+      keyboardType: teclado,
+      inputFormatters: [formatter],
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+        labelStyle: const TextStyle(
+          fontSize: 25,
         ),
       ),
     );
